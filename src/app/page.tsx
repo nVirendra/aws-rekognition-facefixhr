@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AWS from 'aws-sdk';
 import axios from 'axios'; 
 
-export default function EmployeeDetails() {
+export default function FaceDetection() {
 
   
   AWS.config.update({
@@ -71,12 +71,11 @@ export default function EmployeeDetails() {
     
           // Authenticate the visitor
           const response = await authenticate(visitorImageName);
-          console.log('aws responswe',response);
           if (response?.Message === 'Success') {
 
             try {
-              const { data: employee } = await axios.get(`https://dev.fixhr.app/api/face-detection/employee/${response.FaceId}`);
-              console.log('hr db',employee.status);
+              const { data: employee } = await axios.get(`https://web.fixhr.app/api/face-detection/employee/${response.FaceId}`);
+              
               
               if (employee.status === true) {
                 setAuth(true);
@@ -87,8 +86,11 @@ export default function EmployeeDetails() {
                 setPhone(employee.data.phone);
                 setEmail(employee.data.email);
                 setAdddress(employee.data.address);
-  
-                setUploadResultMessage(`Hi ${employee.name} , welcome to work!`);
+                if(employee.data.attendance_marked){
+                  setUploadResultMessage(`Hi ${employee.name} , welcome to work!`);
+                }else{
+                  setUploadResultMessage(`Attendance has already been marked.!`);
+                }
               } else {
                 setUploadResultMessage('Employee not found.');
                 setAuth(false);
@@ -187,7 +189,7 @@ export default function EmployeeDetails() {
         {/* Right Basic Details */}
         {isAuth ? (<div className="sm:col-span-1 flex flex-col justify-center">
           <h3 className="text-lg font-semibold text-green-500 mb-2">
-            Welcome to Work
+            {uploadResultMessage}
           </h3>
           <h2 className="text-2xl font-bold text-gray-800">
             <span> {employeeId} -</span> {name}
