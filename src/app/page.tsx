@@ -73,7 +73,7 @@ export default function FaceDetection() {
           const response = await authenticate(visitorImageName);
           if (response?.Message === 'Success') {
 
-            try {
+            try {//
               const { data: employee } = await axios.get(`https://web.fixhr.app/api/face-detection/employee/${response.FaceId}`);
               
               
